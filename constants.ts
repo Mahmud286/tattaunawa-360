@@ -1,9 +1,30 @@
 
-import { Consultant } from './types';
+import { Consultant, ExpertCategory } from './types';
 
 export const APP_NAME = "Tattaunawa360";
 export const TAGLINE = "Find the Right Expert, Right Now.";
 export const FOOTER_COPY = "Dan Mudi Digital Hub";
+
+export const ALL_CATEGORIES: ExpertCategory[] = [
+  'Programming & Tech',
+  'Health & Medicine',
+  'Architecture & Engineering',
+  'Education & Teaching',
+  'Business & Legal Advisory',
+  'Design, Arts & Creativity',
+  'Digital Marketing & SEO',
+  'Finance & Accounting',
+  'Writing & Translation',
+  'Video & Animation',
+  'Music & Audio',
+  'Data Science & AI',
+  'Lifestyle & Coaching',
+  'Home Services & Trades',
+  'Agriculture & Farming',
+  'Real Estate',
+  'Transportation & Logistics',
+  'Events & Hospitality'
+];
 
 export const SUPPORTED_LANGUAGES = [
   { code: 'EN', name: 'English', flag: '🇺🇸' },

@@ -1,6 +1,6 @@
 
 import React, { useState } from 'react';
-import { APP_NAME, FOOTER_COPY, MOCK_CONSULTANTS, TAGLINE, SUPPORTED_LANGUAGES, TRANSLATIONS, COUNTRIES } from './constants';
+import { APP_NAME, FOOTER_COPY, MOCK_CONSULTANTS, TAGLINE, SUPPORTED_LANGUAGES, TRANSLATIONS, COUNTRIES, ALL_CATEGORIES } from './constants';
 import { ViewState, Consultant, ExpertCategory } from './types';
 import ChatWidget from './components/ChatWidget';
 import ConsultantCard from './components/ConsultantCard';
@@ -149,7 +149,8 @@ const App: React.FC = () => {
   };
 
   const selectedExpert = getExpertForProfile();
-  const categories = ['All', ...Array.from(new Set(MOCK_CONSULTANTS.map(c => c.category)))];
+  // Categories derived from the comprehensive list in constants
+  const categories = ['All', ...ALL_CATEGORIES];
 
   // --- SUB-COMPONENTS (Refactored to render functions to avoid focus loss) ---
 
@@ -275,7 +276,10 @@ const App: React.FC = () => {
                   </button>
                 </div>
                 <div className="mt-0 sm:ml-0">
-                  <button className="w-full flex items-center justify-center px-8 py-3 border border-transparent text-base font-medium rounded-md text-blue-700 bg-blue-100 hover:bg-blue-200 md:py-4 md:text-lg md:px-10">
+                  <button 
+                    onClick={() => handleNavClick('JOIN')}
+                    className="w-full flex items-center justify-center px-8 py-3 border border-transparent text-base font-medium rounded-md text-blue-700 bg-blue-100 hover:bg-blue-200 md:py-4 md:text-lg md:px-10"
+                  >
                     {t('joinExpert')}
                   </button>
                 </div>
@@ -286,6 +290,111 @@ const App: React.FC = () => {
       </div>
       <div className="lg:absolute lg:inset-y-0 lg:right-0 lg:w-1/2">
         <img className="h-56 w-full object-cover sm:h-72 md:h-96 lg:w-full lg:h-full" src="https://images.unsplash.com/photo-1522071820081-009f0129c71c?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=2850&q=80" alt="Team meeting" />
+      </div>
+    </div>
+  );
+
+  const renderJoinView = () => (
+    <div className="max-w-3xl mx-auto px-4 py-12">
+      <div className="text-center mb-10">
+        <h1 className="text-3xl font-bold text-slate-900 mb-4">{t('joinExpert')}</h1>
+        <p className="text-slate-600 max-w-2xl mx-auto">
+          Share your expertise with the world. Create a profile, set your rates, and start connecting with clients globally.
+        </p>
+      </div>
+
+      <div className="bg-white p-8 rounded-2xl border border-slate-200 shadow-lg">
+        <form className="space-y-6" onSubmit={(e) => { 
+          e.preventDefault(); 
+          alert('Application submitted successfully! Our team will verify your documents and contact you shortly.'); 
+          setView('HOME'); 
+        }}>
+          
+          <div className="grid grid-cols-1 gap-6 sm:grid-cols-2">
+            <div>
+              <label className="block text-sm font-medium text-slate-700 mb-1">Full Name</label>
+              <input required type="text" className="w-full border border-slate-300 rounded-lg px-4 py-2 focus:ring-2 focus:ring-blue-500 outline-none" placeholder="e.g. Dr. Jane Doe" />
+            </div>
+            <div>
+              <label className="block text-sm font-medium text-slate-700 mb-1">Email Address</label>
+              <input required type="email" className="w-full border border-slate-300 rounded-lg px-4 py-2 focus:ring-2 focus:ring-blue-500 outline-none" placeholder="jane@example.com" />
+            </div>
+          </div>
+
+          <div>
+            <label className="block text-sm font-medium text-slate-700 mb-1">Profile Picture</label>
+            <div className="flex items-center gap-4">
+              <div className="h-16 w-16 bg-slate-100 rounded-full flex items-center justify-center border border-slate-200 text-slate-400 overflow-hidden">
+                <svg className="w-8 h-8" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1} d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                </svg>
+              </div>
+              <div className="flex-1">
+                 <input type="file" accept="image/*" className="block w-full text-sm text-slate-500 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-blue-50 file:text-blue-700 hover:file:bg-blue-100 cursor-pointer"/>
+                 <p className="text-xs text-slate-500 mt-1">JPG, PNG or GIF. Max 2MB.</p>
+              </div>
+            </div>
+          </div>
+
+          <div className="grid grid-cols-1 gap-6 sm:grid-cols-2">
+            <div>
+              <label className="block text-sm font-medium text-slate-700 mb-1">Professional Title</label>
+              <input required type="text" className="w-full border border-slate-300 rounded-lg px-4 py-2 focus:ring-2 focus:ring-blue-500 outline-none" placeholder="e.g. Senior Cardiologist" />
+            </div>
+            <div>
+              <label className="block text-sm font-medium text-slate-700 mb-1">Category</label>
+              <select className="w-full border border-slate-300 rounded-lg px-4 py-2 focus:ring-2 focus:ring-blue-500 outline-none bg-white">
+                {categories.filter(c => c !== 'All').map(c => (
+                  <option key={c} value={c}>{c}</option>
+                ))}
+              </select>
+            </div>
+          </div>
+
+          <div className="grid grid-cols-1 gap-6 sm:grid-cols-2">
+             <div>
+               <label className="block text-sm font-medium text-slate-700 mb-1">Hourly Rate (USD)</label>
+               <div className="relative">
+                 <span className="absolute left-3 top-2 text-slate-500">$</span>
+                 <input required type="number" min="1" className="w-full border border-slate-300 rounded-lg pl-8 pr-4 py-2 focus:ring-2 focus:ring-blue-500 outline-none" placeholder="50" />
+               </div>
+             </div>
+             <div>
+               <label className="block text-sm font-medium text-slate-700 mb-1">Years of Experience</label>
+               <input required type="number" min="0" className="w-full border border-slate-300 rounded-lg px-4 py-2 focus:ring-2 focus:ring-blue-500 outline-none" placeholder="5" />
+             </div>
+          </div>
+
+          <div>
+            <label className="block text-sm font-medium text-slate-700 mb-1">Professional Bio</label>
+            <textarea required className="w-full border border-slate-300 rounded-lg px-4 py-2 h-32 focus:ring-2 focus:ring-blue-500 outline-none" placeholder="Describe your expertise, background, and what you offer..."></textarea>
+          </div>
+
+          <div className="border-t border-slate-100 pt-6">
+            <h3 className="text-lg font-bold text-slate-900 mb-4">Verification Documents</h3>
+            <div className="border-2 border-dashed border-slate-300 rounded-xl p-8 text-center hover:bg-slate-50 transition-colors cursor-pointer">
+              <svg className="mx-auto h-12 w-12 text-slate-400" stroke="currentColor" fill="none" viewBox="0 0 48 48" aria-hidden="true">
+                <path d="M28 8H12a4 4 0 00-4 4v20m32-12v8m0 0v8a4 4 0 01-4 4H12a4 4 0 01-4-4v-4m32-4l-3.172-3.172a4 4 0 00-5.656 0L28 28M8 32l9.172-9.172a4 4 0 015.656 0L28 28m0 0l4 4m4-24h8m-4-4v8m-12 4h.02" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
+              </svg>
+              <p className="mt-1 text-sm text-slate-600">
+                <span className="font-medium text-blue-600 hover:text-blue-500">Upload a file</span> or drag and drop
+              </p>
+              <p className="text-xs text-slate-500">
+                Professional ID, Certificate, or License (PDF, PNG, JPG up to 10MB)
+              </p>
+              <input type="file" className="hidden" />
+            </div>
+          </div>
+
+          <div className="pt-4">
+            <button type="submit" className="w-full bg-blue-600 text-white font-bold py-4 rounded-xl hover:bg-blue-700 transition-colors shadow-lg shadow-blue-200">
+              Submit Application
+            </button>
+            <p className="text-center text-xs text-slate-500 mt-4">
+              By submitting, you agree to our Terms of Service and Privacy Policy.
+            </p>
+          </div>
+        </form>
       </div>
     </div>
   );
@@ -684,6 +793,7 @@ const App: React.FC = () => {
         {view === 'REGION' && renderRegionSection()}
         {view === 'PROFILE' && renderProfileView()}
         {view === 'DASHBOARD' && renderDashboard()}
+        {view === 'JOIN' && renderJoinView()}
         {view === 'HELP' && renderHelpView()}
         {view === 'TERMS' && renderTermsView()}
         {view === 'PRIVACY' && renderPrivacyView()}

@@ -1,3 +1,4 @@
+
 import React, { useState, useRef, useEffect } from 'react';
 import { getGeminiResponse, AiResponse } from '../services/geminiService';
 import { ChatMessage, Consultant } from '../types';
@@ -120,7 +121,7 @@ const ChatWidget: React.FC<ChatWidgetProps> = ({ onViewExpert }) => {
         `}>
           
           {isVoiceMode ? (
-            <LiveSession onClose={() => setIsVoiceMode(false)} />
+            <LiveSession onClose={() => setIsVoiceMode(false)} consultantName="Tattaunawa360 Assistant" />
           ) : (
             <>
               {/* Header */}

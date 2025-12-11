@@ -5,7 +5,19 @@ export type ExpertCategory =
   | 'Architecture & Engineering' 
   | 'Education & Teaching' 
   | 'Business & Legal Advisory' 
-  | 'Design, Arts & Creativity';
+  | 'Design, Arts & Creativity'
+  | 'Digital Marketing & SEO'
+  | 'Finance & Accounting'
+  | 'Writing & Translation'
+  | 'Video & Animation'
+  | 'Music & Audio'
+  | 'Data Science & AI'
+  | 'Lifestyle & Coaching'
+  | 'Home Services & Trades'
+  | 'Agriculture & Farming'
+  | 'Real Estate'
+  | 'Transportation & Logistics'
+  | 'Events & Hospitality';
 
 export interface Review {
   id: string;
@@ -59,4 +71,4 @@ export interface User {
   role: 'user' | 'consultant';
 }
 
-export type ViewState = 'HOME' | 'BROWSE' | 'REGION' | 'PROFILE' | 'DASHBOARD' | 'LOGIN' | 'HELP' | 'TERMS' | 'PRIVACY' | 'CONTACT';
+export type ViewState = 'HOME' | 'BROWSE' | 'REGION' | 'PROFILE' | 'DASHBOARD' | 'LOGIN' | 'HELP' | 'TERMS' | 'PRIVACY' | 'CONTACT' | 'JOIN';

@@ -1,3 +1,4 @@
+
 import React, { useEffect, useRef, useState } from 'react';
 import { GoogleGenAI, LiveServerMessage, Modality } from "@google/genai";
 import { MOCK_CONSULTANTS } from '../constants';
@@ -5,9 +6,10 @@ import { createPcmBlob, decodeAudioData, PCM_SAMPLE_RATE_INPUT, PCM_SAMPLE_RATE_
 
 interface LiveSessionProps {
   onClose: () => void;
+  consultantName?: string;
 }
 
-const LiveSession: React.FC<LiveSessionProps> = ({ onClose }) => {
+const LiveSession: React.FC<LiveSessionProps> = ({ onClose, consultantName = "Tattaunawa360 Assistant" }) => {
   const [status, setStatus] = useState<'connecting' | 'connected' | 'error'>('connecting');
   const [errorMessage, setErrorMessage] = useState('');
   const [isAiSpeaking, setIsAiSpeaking] = useState(false);
@@ -346,19 +348,28 @@ const LiveSession: React.FC<LiveSessionProps> = ({ onClose }) => {
       )}
 
       {status === 'connected' && (
-        <div className="flex flex-col items-center w-full flex-grow justify-center gap-8">
+        <div className="flex flex-col items-center w-full flex-grow justify-center gap-6">
            
-           <div className="text-center">
-             <h3 className="text-xl font-bold text-slate-900 mb-1">
-                 {isAiSpeaking ? "Gemini is speaking..." : "Listening..."}
-             </h3>
-             <p className="text-slate-400 text-sm">
-                 {isAiSpeaking ? "Interactive Voice Mode" : "Go ahead, I'm listening"}
+           <div className="text-center mb-4">
+             <div className="w-24 h-24 bg-gradient-to-br from-blue-500 to-indigo-600 rounded-full mx-auto mb-4 flex items-center justify-center shadow-xl border-4 border-white relative">
+                 <svg className="w-12 h-12 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9.75 17L9 20l-1 1h8l-1-1-.75-3M3 13h18M5 17h14a2 2 0 002-2V5a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
+                 </svg>
+                 {isAiSpeaking && (
+                    <span className="absolute -bottom-1 -right-1 flex h-6 w-6">
+                      <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-green-400 opacity-75"></span>
+                      <span className="relative inline-flex rounded-full h-6 w-6 bg-green-500 border-2 border-white"></span>
+                    </span>
+                 )}
+             </div>
+             <h2 className="text-2xl font-bold text-slate-800">{consultantName}</h2>
+             <p className="text-slate-500 text-sm mt-1">
+                 {isAiSpeaking ? "Speaking..." : "Listening..."}
              </p>
            </div>
 
            {/* Canvas Visualizer */}
-           <div className="relative w-full h-32 flex items-center justify-center bg-white rounded-2xl shadow-inner border border-slate-100 overflow-hidden">
+           <div className="relative w-full max-w-sm h-32 flex items-center justify-center bg-white rounded-2xl shadow-inner border border-slate-100 overflow-hidden">
              <canvas 
                ref={canvasRef} 
                width={400} 
