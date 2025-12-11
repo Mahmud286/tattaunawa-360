@@ -32,11 +32,22 @@ export interface Consultant {
   reviews: Review[];
 }
 
+export interface ExternalExpert {
+  name: string;
+  title: string;
+  location: string;
+  verificationSource: string;
+  workType: string;
+  bio: string;
+  sourceUrl?: string;
+}
+
 export interface ChatMessage {
   id: string;
   role: 'user' | 'assistant' | 'system';
   content: string;
-  suggestedExperts?: string[]; // IDs of experts suggested by AI
+  suggestedExperts?: string[]; // IDs of local experts
+  externalMatches?: ExternalExpert[]; // External experts found via search
 }
 
 export interface User {

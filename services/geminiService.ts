@@ -1,5 +1,5 @@
-import { GoogleGenAI, Type } from "@google/genai";
-import { Consultant } from "../types";
+import { GoogleGenAI } from "@google/genai";
+import { Consultant, ExternalExpert } from "../types";
 import { MOCK_CONSULTANTS } from "../constants";
 
 // Initialize Gemini
@@ -8,11 +8,13 @@ const ai = new GoogleGenAI({ apiKey: process.env.API_KEY });
 export interface AiResponse {
   message: string;
   recommendedConsultantIds: string[];
+  externalMatches?: ExternalExpert[];
 }
 
 export const getGeminiResponse = async (
   userMessage: string,
-  chatHistory: string
+  chatHistory: string,
+  userLocation?: string
 ): Promise<AiResponse> => {
   try {
     // We provide a minimized version of the consultants to the context to save tokens
@@ -27,53 +29,86 @@ export const getGeminiResponse = async (
     }));
 
     const systemInstruction = `
-      You are the Tattaunawa360 Smart Assistant. Your goal is to help users find the perfect expert consultant.
+      You are the **Global Expert and Verification Locator**. Your primary function is to serve as an intelligent search engine that locates, verifies, and presents experts to the user based on specific criteria.
+
+      **Core Directives:**
+      1. **Geographic Proximity Search:** Prioritize searching for experts based on the user's real-time location (${userLocation || "Unknown"}).
+      2. **Verification Search:** Use Google Search to find experts with credible professional history (LinkedIn, GitHub, etc.).
+      3. **Work Preference Flexibility:** Clearly distinguish between Remote and On-site availability.
+      4. **Hybrid Matching:** First, check the "Local Verified Consultants" list provided below. If a good match is found, recommend them. If NOT, use Google Search to find external experts.
       
-      Here is the list of available verified consultants:
+      **Local Verified Consultants List:**
       ${JSON.stringify(consultantContext)}
 
-      Rules:
-      1. Analyze the user's request.
-      2. If they are looking for help, identify which consultant matches their needs based on category, bio, languages, or title.
-      3. Be helpful, professional, and friendly.
-      4. Always return the response in the specified JSON format.
-      5. If no specific consultant matches perfectly, suggest the closest ones or ask clarifying questions.
-      6. Support multiple languages in your text response if the user speaks another language.
+      **Output Format:**
+      You must return a strictly formatted JSON object. Do not return Markdown. 
+      Structure:
+      {
+        "message": "Conversational response...",
+        "recommendedConsultantIds": ["id1", "id2"], // Only for experts from the Local Verified list
+        "externalMatches": [ // For experts found via Google Search
+          {
+            "name": "Full Name",
+            "title": "Job Title",
+            "location": "City, Country",
+            "verificationSource": "e.g. LinkedIn, Company Website",
+            "workType": "Remote/On-site",
+            "bio": "Brief credential summary",
+            "sourceUrl": "URL found in search" 
+          }
+        ]
+      }
     `;
 
     const response = await ai.models.generateContent({
-      model: "gemini-2.5-flash-lite",
-      contents: `History: ${chatHistory}\nUser: ${userMessage}`,
+      model: "gemini-2.5-flash",
+      contents: `History: ${chatHistory}\nUser Location: ${userLocation || "Not provided"}\nUser: ${userMessage}`,
       config: {
         systemInstruction: systemInstruction,
-        responseMimeType: "application/json",
-        responseSchema: {
-          type: Type.OBJECT,
-          properties: {
-            message: {
-              type: Type.STRING,
-              description: "The conversational response to the user."
-            },
-            recommendedConsultantIds: {
-              type: Type.ARRAY,
-              items: { type: Type.STRING },
-              description: "An array of IDs of the consultants you recommend based on the query. Empty if none relevant."
-            }
-          },
-          required: ["message", "recommendedConsultantIds"]
-        }
+        tools: [{ googleSearch: {} }],
+        // responseSchema is not supported with tools in this version of the SDK/API combination for some models, 
+        // so we rely on the system instruction for JSON formatting.
       }
     });
 
     const text = response.text;
     if (!text) throw new Error("No response from AI");
 
-    return JSON.parse(text) as AiResponse;
+    // Clean up potential markdown formatting (```json ... ```)
+    const cleanedText = text.replace(/```json/g, '').replace(/```/g, '').trim();
+    
+    // Extract grounding metadata if available (for source URLs)
+    const groundingChunks = response.candidates?.[0]?.groundingMetadata?.groundingChunks || [];
+    
+    let parsed: AiResponse;
+    try {
+        parsed = JSON.parse(cleanedText) as AiResponse;
+    } catch (e) {
+        console.error("JSON Parse Error", e);
+        // Fallback if model fails to output JSON
+        return {
+            message: text,
+            recommendedConsultantIds: []
+        };
+    }
+
+    // Attempt to enrich external matches with URLs from grounding if missing
+    if (parsed.externalMatches && groundingChunks.length > 0) {
+        parsed.externalMatches = parsed.externalMatches.map((ex, idx) => {
+             // Simple heuristic: try to map chunks to experts if possible, otherwise use the first chunk
+             if (!ex.sourceUrl && groundingChunks[idx]?.web?.uri) {
+                 return { ...ex, sourceUrl: groundingChunks[idx].web.uri };
+             }
+             return ex;
+        });
+    }
+
+    return parsed;
 
   } catch (error) {
     console.error("Gemini API Error:", error);
     return {
-      message: "I'm having trouble connecting to the expert database right now. Please try browsing the list manually.",
+      message: "I'm having trouble connecting to the global expert network right now. Please try browsing the local list manually.",
       recommendedConsultantIds: []
     };
   }

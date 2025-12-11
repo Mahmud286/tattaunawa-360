@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { APP_NAME, FOOTER_COPY, MOCK_CONSULTANTS, TAGLINE } from './constants';
-import { ViewState, Consultant } from './types';
+import { ViewState, Consultant, ExpertCategory } from './types';
 import ChatWidget from './components/ChatWidget';
 import ConsultantCard from './components/ConsultantCard';
 import VideoModal from './components/VideoModal';
@@ -12,6 +12,84 @@ const App: React.FC = () => {
   const [showVideoModal, setShowVideoModal] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+
+  // Dynamic Global Search Logic
+  // If local search fails, we generate "Global" results based on the query
+  const getDisplayConsultants = () => {
+    // 1. Local Filter
+    const localMatches = MOCK_CONSULTANTS.filter(c => {
+      const matchesCategory = selectedCategory === 'All' || c.category === selectedCategory;
+      const matchesSearch = c.name.toLowerCase().includes(searchQuery.toLowerCase()) || 
+                            c.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
+                            c.bio.toLowerCase().includes(searchQuery.toLowerCase());
+      return matchesCategory && matchesSearch;
+    });
+
+    // 2. If local matches exist, return them
+    if (localMatches.length > 0 || searchQuery.length < 2) {
+      return { consultants: localMatches, source: 'local' };
+    }
+
+    // 3. If no local matches, generate "Global/External" results based on the search query
+    // This simulates searching a wider web directory
+    const globalResults: Consultant[] = [
+      {
+        id: `global-1-${searchQuery}`,
+        name: 'Alex Thompson',
+        title: `Professional ${searchQuery} Specialist`, // Dynamically uses the search term
+        category: 'Business & Legal Advisory', // Fallback category
+        bio: `Experienced ${searchQuery} professional located in New York. Identified via global web search.`,
+        avatarUrl: `https://picsum.photos/seed/${searchQuery}1/200/200`,
+        hourlyRate: 0, // Unknown for external
+        currency: 'USD',
+        languages: ['English'],
+        experienceYears: 5,
+        rating: 0,
+        reviewCount: 0,
+        verified: false, // Mark as unverified/external
+        availability: ['Mon-Fri'],
+        reviews: []
+      },
+      {
+        id: `global-2-${searchQuery}`,
+        name: 'Maria Garcia',
+        title: `Senior ${searchQuery} Consultant`,
+        category: 'Design, Arts & Creativity',
+        bio: `Top-rated ${searchQuery} expert with international experience.`,
+        avatarUrl: `https://picsum.photos/seed/${searchQuery}2/200/200`,
+        hourlyRate: 0,
+        currency: 'USD',
+        languages: ['English', 'Spanish'],
+        experienceYears: 8,
+        rating: 0,
+        reviewCount: 0,
+        verified: false,
+        availability: ['Weekends'],
+        reviews: []
+      },
+      {
+        id: `global-3-${searchQuery}`,
+        name: 'Wei Chen',
+        title: `Certified ${searchQuery}`,
+        category: 'Programming & Tech',
+        bio: `Specialized in ${searchQuery} services and consulting.`,
+        avatarUrl: `https://picsum.photos/seed/${searchQuery}3/200/200`,
+        hourlyRate: 0,
+        currency: 'USD',
+        languages: ['English', 'Mandarin'],
+        experienceYears: 12,
+        rating: 0,
+        reviewCount: 0,
+        verified: false,
+        availability: ['Mon', 'Wed', 'Fri'],
+        reviews: []
+      }
+    ];
+
+    return { consultants: globalResults, source: 'global' };
+  };
+
+  const { consultants: displayConsultants, source: dataSource } = getDisplayConsultants();
 
   const handleViewExpert = (id: string) => {
     setSelectedExpertId(id);
@@ -31,16 +109,18 @@ const App: React.FC = () => {
     setIsMobileMenuOpen(false);
   };
 
-  // Filter Logic
-  const filteredConsultants = MOCK_CONSULTANTS.filter(c => {
-    const matchesCategory = selectedCategory === 'All' || c.category === selectedCategory;
-    const matchesSearch = c.name.toLowerCase().includes(searchQuery.toLowerCase()) || 
-                          c.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
-                          c.bio.toLowerCase().includes(searchQuery.toLowerCase());
-    return matchesCategory && matchesSearch;
-  });
+  // Helper to find expert across both lists for the profile view
+  const getExpertForProfile = () => {
+    const local = MOCK_CONSULTANTS.find(c => c.id === selectedExpertId);
+    if (local) return local;
+    
+    // If not local, try to find it in the generated list (re-generating briefly for display consistency)
+    // In a real app, this would come from a persistent store/API
+    const globalList = getDisplayConsultants().consultants;
+    return globalList.find(c => c.id === selectedExpertId);
+  };
 
-  const selectedExpert = MOCK_CONSULTANTS.find(c => c.id === selectedExpertId);
+  const selectedExpert = getExpertForProfile();
   const categories = ['All', ...Array.from(new Set(MOCK_CONSULTANTS.map(c => c.category)))];
 
   // --- SUB-COMPONENTS (Refactored to render functions to avoid focus loss) ---
@@ -146,14 +226,20 @@ const App: React.FC = () => {
       <div className="flex flex-col md:flex-row md:items-center justify-between mb-8 gap-4">
         <div>
            <h2 className="text-2xl sm:text-3xl font-bold text-slate-900">Browse Experts</h2>
-           <p className="text-slate-500 mt-1 text-sm sm:text-base">Found {filteredConsultants.length} professionals matching your criteria</p>
+           {dataSource === 'local' ? (
+             <p className="text-slate-500 mt-1 text-sm sm:text-base">Found {displayConsultants.length} professionals matching your criteria</p>
+           ) : (
+             <p className="text-orange-600 mt-1 text-sm sm:text-base font-medium">
+               No local matches found. Showing global results for "{searchQuery}".
+             </p>
+           )}
         </div>
         
         {/* Search & Filter */}
         <div className="flex flex-col sm:flex-row gap-3 w-full md:w-auto">
           <input 
             type="text" 
-            placeholder="Search by name or skill..." 
+            placeholder="Type any profession (e.g. Plumber)..." 
             className="w-full sm:w-64 border border-slate-300 rounded-lg px-4 py-2 focus:ring-2 focus:ring-blue-500 focus:outline-none"
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
@@ -171,14 +257,14 @@ const App: React.FC = () => {
       </div>
 
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-        {filteredConsultants.map(consultant => (
+        {displayConsultants.map(consultant => (
           <ConsultantCard 
             key={consultant.id} 
             consultant={consultant} 
             onViewProfile={handleViewExpert} 
           />
         ))}
-        {filteredConsultants.length === 0 && (
+        {displayConsultants.length === 0 && (
           <div className="col-span-full text-center py-20 bg-white rounded-xl border border-dashed border-slate-300">
              <p className="text-slate-500 text-lg">No experts found matching your criteria.</p>
              <button onClick={() => {setSelectedCategory('All'); setSearchQuery('');}} className="mt-4 text-blue-600 font-medium hover:underline">Clear Filters</button>
@@ -198,7 +284,7 @@ const App: React.FC = () => {
         </button>
 
         <div className="bg-white rounded-2xl shadow-sm border border-slate-200 overflow-hidden">
-          <div className="h-32 sm:h-48 bg-gradient-to-r from-blue-600 to-slate-800"></div>
+          <div className={`h-32 sm:h-48 bg-gradient-to-r ${selectedExpert.verified ? 'from-blue-600 to-slate-800' : 'from-slate-400 to-slate-600'}`}></div>
           <div className="px-4 sm:px-8 pb-8">
             {/* Header Section: Avatar and Actions */}
             <div className="relative flex flex-col sm:flex-row justify-between items-start sm:items-end -mt-12 sm:-mt-16 mb-6">
@@ -209,19 +295,32 @@ const App: React.FC = () => {
               />
               <div className="flex w-full sm:w-auto gap-3 sm:mb-2">
                  <button className="flex-1 sm:flex-none bg-white border border-slate-300 text-slate-700 px-4 py-2 rounded-lg font-medium hover:bg-slate-50 text-center">Message</button>
-                 <button onClick={handleBookSession} className="flex-1 sm:flex-none bg-blue-600 text-white px-6 py-2 rounded-lg font-bold hover:bg-blue-700 shadow-lg shadow-blue-200 text-center text-sm sm:text-base whitespace-nowrap">
-                   Book (${selectedExpert.hourlyRate}/hr)
-                 </button>
+                 {selectedExpert.verified ? (
+                   <button onClick={handleBookSession} className="flex-1 sm:flex-none bg-blue-600 text-white px-6 py-2 rounded-lg font-bold hover:bg-blue-700 shadow-lg shadow-blue-200 text-center text-sm sm:text-base whitespace-nowrap">
+                     Book (${selectedExpert.hourlyRate}/hr)
+                   </button>
+                 ) : (
+                   <button onClick={() => alert("This request has been sent to the expert. They will contact you if interested.")} className="flex-1 sm:flex-none bg-slate-800 text-white px-6 py-2 rounded-lg font-bold hover:bg-slate-900 shadow-lg text-center text-sm sm:text-base whitespace-nowrap">
+                     Invite to Join
+                   </button>
+                 )}
               </div>
             </div>
 
             <div className="grid md:grid-cols-3 gap-8">
               <div className="md:col-span-2 space-y-8">
                  <div>
-                    <h1 className="text-2xl sm:text-3xl font-bold text-slate-900">{selectedExpert.name}</h1>
+                    <h1 className="text-2xl sm:text-3xl font-bold text-slate-900 flex items-center gap-2">
+                      {selectedExpert.name}
+                      {!selectedExpert.verified && <span className="text-xs bg-slate-100 text-slate-500 px-2 py-1 rounded-full font-normal">External</span>}
+                    </h1>
                     <p className="text-blue-600 font-medium text-lg">{selectedExpert.title}</p>
                     <div className="flex flex-wrap items-center gap-2 sm:gap-4 mt-2 text-sm text-slate-500">
-                      <span className="flex items-center"><svg className="w-4 h-4 mr-1 text-yellow-500" fill="currentColor" viewBox="0 0 20 20"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" /></svg> {selectedExpert.rating} ({selectedExpert.reviewCount})</span>
+                      {selectedExpert.verified ? (
+                         <span className="flex items-center"><svg className="w-4 h-4 mr-1 text-yellow-500" fill="currentColor" viewBox="0 0 20 20"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" /></svg> {selectedExpert.rating} ({selectedExpert.reviewCount})</span>
+                      ) : (
+                         <span className="text-slate-400">Not rated yet</span>
+                      )}
                       <span className="hidden sm:inline">•</span>
                       <span>{selectedExpert.experienceYears} Years Exp.</span>
                       <span className="hidden sm:inline">•</span>
@@ -244,17 +343,19 @@ const App: React.FC = () => {
                  </div>
 
                  {/* Reviews Placeholder */}
-                 <div>
-                    <h3 className="text-xl font-bold text-slate-900 mb-4">Reviews</h3>
-                    <div className="bg-slate-50 rounded-xl p-4 border border-slate-100">
-                      <div className="flex items-center gap-2 mb-2">
-                         <div className="w-8 h-8 bg-purple-100 rounded-full flex items-center justify-center text-purple-600 font-bold text-xs">JD</div>
-                         <span className="font-bold text-sm">John Doe</span>
-                         <span className="text-xs text-slate-400">2 days ago</span>
+                 {selectedExpert.verified && (
+                  <div>
+                      <h3 className="text-xl font-bold text-slate-900 mb-4">Reviews</h3>
+                      <div className="bg-slate-50 rounded-xl p-4 border border-slate-100">
+                        <div className="flex items-center gap-2 mb-2">
+                          <div className="w-8 h-8 bg-purple-100 rounded-full flex items-center justify-center text-purple-600 font-bold text-xs">JD</div>
+                          <span className="font-bold text-sm">John Doe</span>
+                          <span className="text-xs text-slate-400">2 days ago</span>
+                        </div>
+                        <p className="text-slate-600 text-sm">"Excellent session! Very knowledgeable and helped me solve my problem in under 30 minutes."</p>
                       </div>
-                      <p className="text-slate-600 text-sm">"Excellent session! Very knowledgeable and helped me solve my problem in under 30 minutes."</p>
-                    </div>
-                 </div>
+                  </div>
+                 )}
               </div>
 
               {/* Sidebar Info */}
@@ -450,7 +551,7 @@ const App: React.FC = () => {
 
       {showVideoModal && selectedExpertId && (
         <VideoModal 
-          expertName={MOCK_CONSULTANTS.find(c => c.id === selectedExpertId)?.name || 'Consultant'} 
+          expertName={getExpertForProfile()?.name || 'Consultant'} 
           onClose={() => setShowVideoModal(false)} 
         />
       )}
