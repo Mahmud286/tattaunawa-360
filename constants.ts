@@ -1,8 +1,157 @@
+
 import { Consultant } from './types';
 
 export const APP_NAME = "Tattaunawa360";
 export const TAGLINE = "Find the Right Expert, Right Now.";
 export const FOOTER_COPY = "Dan Mudi Digital Hub";
+
+export const SUPPORTED_LANGUAGES = [
+  { code: 'EN', name: 'English', flag: '🇺🇸' },
+  { code: 'HA', name: 'Hausa', flag: '🇳🇬' },
+  { code: 'FR', name: 'Français', flag: '🇫🇷' },
+  { code: 'AR', name: 'العربية', flag: '🇸🇦' },
+  { code: 'ES', name: 'Español', flag: '🇪🇸' },
+  { code: 'ZH', name: '中文', flag: '🇨🇳' },
+  { code: 'DE', name: 'Deutsch', flag: '🇩🇪' },
+  { code: 'HI', name: 'हिन्दी', flag: '🇮🇳' },
+  { code: 'PT', name: 'Português', flag: '🇧🇷' },
+];
+
+export const TRANSLATIONS: Record<string, Record<string, string>> = {
+  EN: {
+    home: 'Home',
+    findExpert: 'Find Expert',
+    region: 'My Region',
+    dashboard: 'Dashboard',
+    signIn: 'Sign In',
+    heroTitle: 'Connect with Global',
+    heroSubtitle: 'Verified Experts',
+    heroDesc: 'Access professionals in Tech, Health, Law, and more instantly. Powered by AI matching to find your perfect fit.',
+    joinExpert: 'Join as Expert',
+    browseTitle: 'Browse Experts',
+    regionTitle: 'Experts Near You',
+    regionSubtitle: 'Connect with verified professionals in your city or nation.',
+    regionPlaceholder: 'Select Region / City',
+    searchPlaceholder: 'Type any profession (e.g. Plumber)...',
+    clearFilters: 'Clear Filters',
+    welcome: 'Welcome',
+    noRegionResults: 'No local experts found in this region. Try the "Find Expert" tab for global options.'
+  },
+  HA: {
+    home: 'Gida',
+    findExpert: 'Nemo Masani',
+    region: 'Yankina',
+    dashboard: 'Gurin Aiki',
+    signIn: 'Shiga',
+    heroTitle: 'Haɗa da Kwararrun',
+    heroSubtitle: 'Duniya da aka Tabbatar',
+    heroDesc: 'Samun kwararru a fannin Fasaha, Lafiya, Sharia, da sauransu nan take. AI ne ke taimakawa wajen nemo wanda ya dace.',
+    joinExpert: 'Shiga a Matsayin Masani',
+    browseTitle: 'Bincika Masana',
+    regionTitle: 'Masana a Kusa da Kai',
+    regionSubtitle: 'Haɗa da kwararrun da aka tabbatar a garinku ko kasarku.',
+    regionPlaceholder: 'Zaɓi Yanki / Birni',
+    searchPlaceholder: 'Rubuta sana\'a (misali Makanike)...',
+    clearFilters: 'Share Bincike',
+    welcome: 'Barka da zuwa',
+    noRegionResults: 'Ba a sami masana a wannan yankin ba. Gwada shafin "Nemo Masani" don binciken duniya.'
+  },
+  FR: {
+    home: 'Accueil',
+    findExpert: 'Trouver un Expert',
+    region: 'Ma Région',
+    dashboard: 'Tableau de Bord',
+    signIn: 'Se Connecter',
+    heroTitle: 'Connectez-vous avec des',
+    heroSubtitle: 'Experts Vérifiés',
+    heroDesc: 'Accédez instantanément à des professionnels de la technologie, de la santé, du droit et plus encore.',
+    joinExpert: 'Devenir Expert',
+    browseTitle: 'Parcourir les Experts',
+    regionTitle: 'Experts Près de Chez Vous',
+    regionSubtitle: 'Connectez-vous avec des professionnels vérifiés dans votre ville ou pays.',
+    regionPlaceholder: 'Sélectionnez une région / ville',
+    searchPlaceholder: 'Tapez une profession (ex. Plombier)...',
+    clearFilters: 'Effacer les filtres',
+    welcome: 'Bienvenue',
+    noRegionResults: 'Aucun expert local trouvé dans cette région. Essayez l\'onglet "Trouver un Expert" pour des options mondiales.'
+  },
+  AR: {
+    home: 'الرئيسية',
+    findExpert: 'ابحث عن خبير',
+    region: 'منطقتي',
+    dashboard: 'لوحة القيادة',
+    signIn: 'تسجيل الدخول',
+    heroTitle: 'تواصل مع خبراء',
+    heroSubtitle: 'عالميين معتمدين',
+    heroDesc: 'الوصول إلى المتخصصين في التكنولوجيا والصحة والقانون والمزيد على الفور.',
+    joinExpert: 'انضم كخبير',
+    browseTitle: 'تصفح الخبراء',
+    regionTitle: 'خبراء بالقرب منك',
+    regionSubtitle: 'تواصل مع محترفين معتمدين في مدينتك أو بلدك.',
+    regionPlaceholder: 'اختر المنطقة / المدينة',
+    searchPlaceholder: 'أدخل مهنة (مثل سباك)...',
+    clearFilters: 'مسح المرشحات',
+    welcome: 'أهلاً بك',
+    noRegionResults: 'لم يتم العثور على خبراء محليين في هذه المنطقة. جرب علامة التبويب "بحث عن خبير" للحصول على خيارات عالمية.'
+  },
+  ES: {
+    home: 'Inicio',
+    findExpert: 'Buscar Experto',
+    region: 'Mi Región',
+    dashboard: 'Panel',
+    signIn: 'Iniciar Sesión',
+    heroTitle: 'Conéctate con',
+    heroSubtitle: 'Expertos Verificados',
+    heroDesc: 'Acceda a profesionales en tecnología, salud, derecho y más al instante.',
+    joinExpert: 'Únete como Experto',
+    browseTitle: 'Explorar Expertos',
+    regionTitle: 'Expertos Cerca de Ti',
+    regionSubtitle: 'Conéctate con profesionales verificados en tu ciudad o país.',
+    regionPlaceholder: 'Seleccionar región / ciudad',
+    searchPlaceholder: 'Escriba una profesión (ej. Fontanero)...',
+    clearFilters: 'Borrar Filtros',
+    welcome: 'Bienvenido',
+    noRegionResults: 'No se encontraron expertos locales en esta región. Pruebe la pestaña "Buscar Experto" para opciones globales.'
+  },
+  ZH: {
+    home: '首页',
+    findExpert: '寻找专家',
+    region: '我的地区',
+    dashboard: '仪表板',
+    signIn: '登录',
+    heroTitle: '联系全球',
+    heroSubtitle: '认证专家',
+    heroDesc: '即时接触科技、健康、法律等领域的专业人士。',
+    joinExpert: '成为专家',
+    browseTitle: '浏览专家',
+    regionTitle: '您附近的专家',
+    regionSubtitle: '与您所在城市或国家的认证专业人士联系。',
+    regionPlaceholder: '选择地区/城市',
+    searchPlaceholder: '输入职业（例如水管工）...',
+    clearFilters: '清除筛选',
+    welcome: '欢迎',
+    noRegionResults: '在该地区未找到本地专家。请尝试“寻找专家”选项卡以获取全球选项。'
+  },
+  DE: {
+    home: 'Startseite',
+    findExpert: 'Experten finden',
+    region: 'Meine Region',
+    dashboard: 'Dashboard',
+    signIn: 'Anmelden',
+    heroTitle: 'Verbinden mit',
+    heroSubtitle: 'Verifizierten Experten',
+    heroDesc: 'Erhalten Sie sofortigen Zugang zu Fachleuten in Technik, Gesundheit, Recht und mehr.',
+    joinExpert: 'Als Experte beitreten',
+    browseTitle: 'Experten durchsuchen',
+    regionTitle: 'Experten in Ihrer Nähe',
+    regionSubtitle: 'Verbinden Sie sich mit verifizierten Fachleuten in Ihrer Stadt oder Ihrem Land.',
+    regionPlaceholder: 'Region / Stadt wählen',
+    searchPlaceholder: 'Beruf eingeben (z.B. Klempner)...',
+    clearFilters: 'Filter löschen',
+    welcome: 'Willkommen',
+    noRegionResults: 'Keine lokalen Experten in dieser Region gefunden. Versuchen Sie den Reiter "Experten finden" für globale Optionen.'
+  }
+};
 
 export const MOCK_CONSULTANTS: Consultant[] = [
   {
@@ -20,6 +169,7 @@ export const MOCK_CONSULTANTS: Consultant[] = [
     reviewCount: 120,
     verified: true,
     availability: ['Mon', 'Wed', 'Fri'],
+    location: 'Kano, Nigeria',
     reviews: []
   },
   {
@@ -37,6 +187,7 @@ export const MOCK_CONSULTANTS: Consultant[] = [
     reviewCount: 45,
     verified: true,
     availability: ['Mon', 'Tue', 'Thu', 'Fri'],
+    location: 'London, UK',
     reviews: []
   },
   {
@@ -54,6 +205,7 @@ export const MOCK_CONSULTANTS: Consultant[] = [
     reviewCount: 88,
     verified: true,
     availability: ['Weekends'],
+    location: 'Lagos, Nigeria',
     reviews: []
   },
   {
@@ -71,6 +223,7 @@ export const MOCK_CONSULTANTS: Consultant[] = [
     reviewCount: 200,
     verified: true,
     availability: ['Tue', 'Thu'],
+    location: 'Mumbai, India',
     reviews: []
   },
   {
@@ -88,6 +241,7 @@ export const MOCK_CONSULTANTS: Consultant[] = [
     reviewCount: 34,
     verified: true,
     availability: ['Mon', 'Fri'],
+    location: 'Paris, France',
     reviews: []
   },
   {
@@ -105,6 +259,7 @@ export const MOCK_CONSULTANTS: Consultant[] = [
     reviewCount: 310,
     verified: true,
     availability: ['Sat', 'Sun'],
+    location: 'Cairo, Egypt',
     reviews: []
   }
 ];

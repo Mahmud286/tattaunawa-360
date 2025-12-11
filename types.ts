@@ -1,3 +1,4 @@
+
 export type ExpertCategory = 
   | 'Programming & Tech' 
   | 'Health & Medicine' 
@@ -29,6 +30,7 @@ export interface Consultant {
   reviewCount: number;
   verified: boolean;
   availability: string[];
+  location: string;
   reviews: Review[];
 }
 
@@ -57,4 +59,4 @@ export interface User {
   role: 'user' | 'consultant';
 }
 
-export type ViewState = 'HOME' | 'BROWSE' | 'PROFILE' | 'DASHBOARD' | 'LOGIN' | 'HELP' | 'TERMS' | 'PRIVACY' | 'CONTACT';
+export type ViewState = 'HOME' | 'BROWSE' | 'REGION' | 'PROFILE' | 'DASHBOARD' | 'LOGIN' | 'HELP' | 'TERMS' | 'PRIVACY' | 'CONTACT';
