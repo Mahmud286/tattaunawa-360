@@ -1,0 +1,8 @@
+{
+  "name": "Tattaunawa360",
+  "description": "Global Expert Connector with Smart AI Chatbot - Connect with verified professionals.",
+  "requestFramePermissions": [
+    "microphone",
+    "camera"
+  ]
+}

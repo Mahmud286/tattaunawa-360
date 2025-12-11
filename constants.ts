@@ -1,0 +1,110 @@
+import { Consultant } from './types';
+
+export const APP_NAME = "Tattaunawa360";
+export const TAGLINE = "Find the Right Expert, Right Now.";
+export const FOOTER_COPY = "Dan Mudi Digital Hub";
+
+export const MOCK_CONSULTANTS: Consultant[] = [
+  {
+    id: '1',
+    name: 'Dr. Amina Yusuf',
+    title: 'Senior Cardiologist',
+    category: 'Health & Medicine',
+    bio: 'Over 15 years of experience in cardiovascular health and preventative medicine.',
+    avatarUrl: 'https://picsum.photos/id/64/200/200',
+    hourlyRate: 150,
+    currency: 'USD',
+    languages: ['English', 'Hausa', 'Arabic'],
+    experienceYears: 15,
+    rating: 4.9,
+    reviewCount: 120,
+    verified: true,
+    availability: ['Mon', 'Wed', 'Fri'],
+    reviews: []
+  },
+  {
+    id: '2',
+    name: 'Sarah Jenkins',
+    title: 'Full Stack React Developer',
+    category: 'Programming & Tech',
+    bio: 'Specializing in scalable web applications using React, Node.js, and Cloud Infrastructure.',
+    avatarUrl: 'https://picsum.photos/id/65/200/200',
+    hourlyRate: 85,
+    currency: 'USD',
+    languages: ['English', 'Spanish'],
+    experienceYears: 8,
+    rating: 4.8,
+    reviewCount: 45,
+    verified: true,
+    availability: ['Mon', 'Tue', 'Thu', 'Fri'],
+    reviews: []
+  },
+  {
+    id: '3',
+    name: 'Chinedu Okeke',
+    title: 'Civil Engineer & Architect',
+    category: 'Architecture & Engineering',
+    bio: 'Structural engineering expert with a focus on sustainable urban planning.',
+    avatarUrl: 'https://picsum.photos/id/91/200/200',
+    hourlyRate: 120,
+    currency: 'USD',
+    languages: ['English', 'Igbo', 'French'],
+    experienceYears: 12,
+    rating: 4.7,
+    reviewCount: 88,
+    verified: true,
+    availability: ['Weekends'],
+    reviews: []
+  },
+  {
+    id: '4',
+    name: 'Priya Patel',
+    title: 'Corporate Legal Advisor',
+    category: 'Business & Legal Advisory',
+    bio: 'Helping startups navigate international business law and IP protection.',
+    avatarUrl: 'https://picsum.photos/id/129/200/200',
+    hourlyRate: 200,
+    currency: 'USD',
+    languages: ['English', 'Hindi'],
+    experienceYears: 10,
+    rating: 5.0,
+    reviewCount: 200,
+    verified: true,
+    availability: ['Tue', 'Thu'],
+    reviews: []
+  },
+  {
+    id: '5',
+    name: 'Jean-Luc Dubois',
+    title: 'Creative Director',
+    category: 'Design, Arts & Creativity',
+    bio: 'Award-winning designer focusing on brand identity and UI/UX.',
+    avatarUrl: 'https://picsum.photos/id/177/200/200',
+    hourlyRate: 95,
+    currency: 'USD',
+    languages: ['French', 'English'],
+    experienceYears: 7,
+    rating: 4.6,
+    reviewCount: 34,
+    verified: true,
+    availability: ['Mon', 'Fri'],
+    reviews: []
+  },
+  {
+    id: '6',
+    name: 'Fatima Al-Fayed',
+    title: 'Mathematics Professor',
+    category: 'Education & Teaching',
+    bio: 'Passionate educator specializing in advanced calculus and statistics for university students.',
+    avatarUrl: 'https://picsum.photos/id/203/200/200',
+    hourlyRate: 60,
+    currency: 'USD',
+    languages: ['Arabic', 'English'],
+    experienceYears: 20,
+    rating: 4.9,
+    reviewCount: 310,
+    verified: true,
+    availability: ['Sat', 'Sun'],
+    reviews: []
+  }
+];
