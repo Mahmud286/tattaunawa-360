@@ -1,6 +1,6 @@
 
 import React, { useState } from 'react';
-import { APP_NAME, FOOTER_COPY, MOCK_CONSULTANTS, TAGLINE, SUPPORTED_LANGUAGES, TRANSLATIONS } from './constants';
+import { APP_NAME, FOOTER_COPY, MOCK_CONSULTANTS, TAGLINE, SUPPORTED_LANGUAGES, TRANSLATIONS, COUNTRIES } from './constants';
 import { ViewState, Consultant, ExpertCategory } from './types';
 import ChatWidget from './components/ChatWidget';
 import ConsultantCard from './components/ConsultantCard';
@@ -114,7 +114,11 @@ const App: React.FC = () => {
   const regionConsultants = getRegionConsultants();
   
   // Extract unique locations for the dropdown
-  const uniqueLocations = Array.from(new Set(MOCK_CONSULTANTS.map(c => c.location).filter(Boolean))).sort();
+  // We include specific cities from the mock data AND the full list of countries
+  const uniqueLocations = Array.from(new Set([
+    ...MOCK_CONSULTANTS.map(c => c.location).filter(Boolean),
+    ...COUNTRIES
+  ])).sort();
 
   const handleViewExpert = (id: string) => {
     setSelectedExpertId(id);
